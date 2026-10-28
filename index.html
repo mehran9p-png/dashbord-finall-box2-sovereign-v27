@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="obsidian">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>ترمینال فرماندهی ثروت و مشاور ارشد مالی | Sovereign Wealth &amp; CFO Terminal V26</title>
+  <meta name="theme-color" content="#07090e" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ================= TOP LIVE MARKET & TELEMETRY STRIP ================= -->
+  <div class="market-strip" aria-label="نوار زنده قیمت بازارها و تله‌متری">
+    <div class="ticker-items">
+      <span class="ticker-chip">🇺🇸 تتر/تومان: <strong id="stripUsdt" class="mono-num">270,100</strong></span>
+      <span class="ticker-chip">💵 دلار آزاد: <strong id="stripUsd" class="mono-num">269,020</strong></span>
+      <span class="ticker-chip">🪙 طلا ۱۸ عیار: <strong id="stripGold" class="mono-num">17,850,000</strong></span>
+      <span class="ticker-chip">₿ بیت‌کوین: <strong id="stripBtc" class="mono-num">$80,018</strong> <span id="stripBtcChg" class="up">(+0.42%)</span></span>
+      <span class="ticker-chip">Ξ اتریوم: <strong id="stripEth" class="mono-num">$2,321</strong></span>
+      <span class="ticker-chip">◎ سولانا: <strong id="stripSol" class="mono-num">$100.37</strong></span>
+      <span class="ticker-chip">📊 شاخص بورس: <strong id="stripTedpix" class="mono-num">2,845,200</strong></span>
+    </div>
+    <div class="ticker-items">
+      <span id="priceEngineHealthBadge" class="pill pill-gold" style="cursor:pointer;" onclick="openPriceEngineModal()">📡 سلامت موتور قیمت: ۱۰۰٪ آماده</span>
+      <span id="marketClockBadge" class="pill pill-cyan">وضعیت بازار: آماده</span>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <!-- Stale or Anomaly Alert Banner -->
+    <div id="topAlertBanner" class="alert-banner" role="alert">
+      <div>
+        <strong>⚡ رادار هوشمند مدیر مالی و سلامت داده:</strong>
+        <span id="topAlertText">در حال بررسی سلامت داده‌ها، نوسان‌های غیرعادی و هزینه فرصت خواب نقدینگی...</span>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-gold" onclick="switchTabByIndex(1)">💎 مشاهده مشاوره وجه نقد</button>
+        <button class="btn" onclick="syncAllLivePrices(true)">🔄 بروزرسانی فوری</button>
+        <button class="btn" onclick="dismissAlertBanner()">متوجه شدم</button>
+      </div>
+    </div>
+
+    <!-- ================= EXECUTIVE HEADER ================= -->
+    <header class="top-header">
+      <div class="brand-group">
+        <div class="brand-logo" aria-hidden="true">♛</div>
+        <div>
+          <div class="brand-title">
+            <h1>ترمینال فرماندهی ثروت و خزانه‌داری <span class="pro-badge">SOVEREIGN V26 • CFO EDITION</span></h1>
+          </div>
+          <div class="brand-sub">
+            <span><span class="live-dot"></span> <span id="syncStatusText">آخرین همگام‌سازی: آماده</span></span>
+            <span>•</span>
+            <span id="sourceBadgeText">موتور کوانتومی قیمت: TSETMC + BrsApi + Tetherland + Nobitex + CoinGecko + Binance</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-gold" onclick="switchTabByIndex(1)" aria-label="مشاور سرمایه‌گذاری وجه نقد">
+          💎 مشاور ارشد وجه نقد (CFO)
+        </button>
+        <button class="btn btn-primary" onclick="syncAllLivePrices(true)" id="liveSyncHeaderBtn" aria-label="بروزرسانی زنده قیمت‌ها">
+          ⚡ قیمت‌گیری زنده بازارها
+        </button>
+        <button class="btn" onclick="openPriceEngineModal()" aria-label="پنل مهندسی قیمت‌گیری">
+          📡 مهندسی قیمت و تست
+        </button>
+        <div class="theme-Cluster" role="group" aria-label="انتخاب تم ظاهری">
+          <button class="theme-chip active" id="themeBtnObsidian" onclick="setAppTheme('obsidian')">✨ Obsidian</button>
+          <button class="theme-chip" id="themeBtnSlate" onclick="setAppTheme('slate')">🌌 Slate</button>
+          <button class="theme-chip" id="themeBtnLight" onclick="setAppTheme('light')">☀️ Ivory</button>
+        </div>
+        <button class="btn" onclick="toggleTheme()" id="themeBtn" aria-label="تغییر تم">☀️/🌙 تم</button>
+        <button class="btn" onclick="togglePrivacyMask()" id="privacyBtn" aria-label="مخفی‌سازی ارقام">
+          👁️ حالت محرمانه
+        </button>
+        <button class="btn" onclick="exportPortfolioBackup()" aria-label="دانلود بکاپ JSON">
+          📥 بکاپ JSON
+        </button>
+        <label class="btn" style="cursor:pointer;" aria-label="بارگذاری بکاپ JSON">
+          📤 بازیابی
+          <input type="file" id="importJsonInput" accept=".json" style="display:none" onchange="importPortfolioBackup(event)" />
+        </label>
+      </div>
+    </header>
+
+    <!-- ================= 4-COLUMN EXECUTIVE HERO BENTO ================= -->
+    <section class="hero-bento">
+      <!-- Card 1: Sovereign Gross & Net Wealth -->
+      <div class="card card-glow">
+        <div class="card-header">
+          <div>
+            <div class="card-title">👑 ثروت کل ناخالص (Sovereign Gross Wealth)</div>
+            <div class="card-subtitle">بورس + استیبل‌کوین + نقد ریالی + کلکسیون NFT + سبد وام</div>
+          </div>
+          <span id="xirrHeroBadge" class="pill pill-up">XIRR: +48.4%</span>
+        </div>
+
+        <div id="heroGrossToman" class="wealth-main-number maskable mono-num">۲۴۴,۳۲۴,۸۲۹ تومان</div>
+
+        <div class="wealth-sub-row">
+          <span>معادل دلاری: <strong id="heroGrossUsd" class="maskable mono-num" style="color:var(--cyan)">$904.57</strong></span>
+          <span>•</span>
+          <span>ثروت خالص (کسر وام): <strong id="heroNetToman" class="maskable mono-num" style="color:var(--emerald)">۲۱۶,۸۲۴,۸۲۹ تومان</strong></span>
+        </div>
+
+        <div class="alloc-bar-wrap">
+          <div class="alloc-bar" id="heroAllocBar"></div>
+          <div class="alloc-legend" id="heroAllocLegend"></div>
+        </div>
+      </div>
+
+      <!-- Card 2: Performance & Alpha Matrix -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">📈 ماتریس عملکرد و آلفای پورتفوی</div>
+            <div class="card-subtitle">سود تحقق‌نیافته، آربیتراژ وام و مهمات دلاری</div>
+          </div>
+          <span class="pill pill-cyan">Real-Time</span>
+        </div>
+
+        <div class="kpi-mini-grid">
+          <div class="kpi-box">
+            <div class="kpi-box-label">سود امروز بورس (۲۴h)</div>
+            <div id="kpiTodayStockPnl" class="kpi-box-val maskable mono-num up">+۱۸۴,۲۰۰ ت</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-box-label">سود خالص سبد سهام</div>
+            <div id="kpiTotalStockPnl" class="kpi-box-val maskable mono-num up">+۱,۳۴۵,۹۰۰ ت</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-box-label">آربیتراژ خالص وام ۳۰م</div>
+            <div id="kpiLoanNetSpread" class="kpi-box-val maskable mono-num up">+۴,۰۰۰,۰۰۰ ت</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-box-label">نقدینگی آماده (Dry Powder)</div>
+            <div id="kpiDryPowderUsd" class="kpi-box-val maskable mono-num" style="color:var(--cyan)">$587.95</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: NEW Senior CFO Cash & Liquidity Pulse -->
+      <div class="card card-gold-glow">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🏛️ نبض خزانه‌داری و وجه نقد (CFO Pulse)</div>
+            <div class="card-subtitle">ممیزی هزینه خواب پول و بازده نقدینگی (GitHub CFO Skill)</div>
+          </div>
+          <span id="heroCfoAlertPill" class="pill pill-gold">هشدار خواب نقد</span>
+        </div>
+
+        <div class="kpi-mini-grid" style="margin-bottom:10px;">
+          <div class="kpi-box">
+            <div class="kpi-box-label">وجه نقد ریالی در دسترس</div>
+            <div id="heroLiquidCashToman" class="kpi-box-val maskable mono-num gold-text">۴۶,۹۷۸,۲۷۸ ت</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-box-label">زیان خواب پول (در ماه)</div>
+            <div id="heroCashDragMonthly" class="kpi-box-val maskable mono-num down">-۱,۲۳۳,۱۸۰ ت</div>
+          </div>
+        </div>
+
+        <div style="font-size:0.75rem; color:var(--text-secondary); display:flex; justify-content:space-between; margin-bottom:10px;">
+          <span>باند پوشش اقساط وام: <strong id="heroRunwayMonths" class="mono-num up">۱۶.۶ ماه</strong></span>
+          <span>بازده هدف خزانه: <strong class="mono-num gold-text">۳۸.۴٪ سالانه</strong></span>
+        </div>
+
+        <button class="btn btn-gold" style="width:100%; min-height:38px;" onclick="switchTabByIndex(1)">
+          🚀 باز کردن میز مشاور ارشد وجه نقد
+        </button>
+      </div>
+
+      <!-- Card 4: Financial Independence Goal Widget -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🎯 ویجت هدف استقلال مالی</div>
+            <div class="card-subtitle">محاسبه درصد تحقق و زمان رسیدن به هدف</div>
+          </div>
+          <span id="goalPercentBadge" class="pill pill-indigo">48.9%</span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; font-size:0.79rem; margin-bottom:4px;">
+          <span>ثروت فعلی: <strong id="goalCurrentLabel" class="maskable mono-num">۲۴۴.۳ میلیون</strong></span>
+          <span>هدف: <strong id="goalTargetLabel" class="maskable mono-num">۵۰۰.۰ میلیون</strong></span>
+        </div>
+
+        <div class="progress-track" aria-label="نوار پیشرفت هدف مالی">
+          <div id="goalProgressFill" class="progress-fill" style="width: 48.9%;"></div>
+        </div>
+
+        <div style="font-size:0.74rem; color:var(--text-secondary); margin: 7px 0 10px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:4px;">
+          <span>مانده: <strong id="goalRemainingLabel" class="maskable mono-num" style="color:var(--amber)">۲۵۵.۷ میلیون ت</strong></span>
+          <span id="goalEtaBadge" style="color:var(--emerald)">⏱️ تحقق: ۱۴ ماه دیگر</span>
+        </div>
+
+        <div style="display:flex; gap:6px; align-items:center;">
+          <input type="number" id="wealthTargetInput" class="inline-input" style="flex:1; width:auto; text-align:right; padding:7px 10px;" placeholder="هدف جدید (تومان)..." />
+          <button class="btn btn-primary" style="min-height:36px;" onclick="saveTargetWealth()">ذخیره هدف</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 6 FLAGSHIP NAVIGATION TABS ================= -->
+    <nav class="nav-tabs" aria-label="تب‌های ترمینال">
+      <button class="tab-btn active" onclick="switchTab('tab-command', this)">🧭 ۱. نمای فرماندهی و رشد واقعی</button>
+      <button class="tab-btn" onclick="switchTab('tab-cash-advisor', this)">💎 مشاور ارشد سرمایه‌گذاری وجه نقد (CFO)</button>
+      <button class="tab-btn" onclick="switchTab('tab-markets', this)">📊 ۲. رادار بورس (۱۱ نماد) و شکارچی کریپتو</button>
+      <button class="tab-btn" onclick="switchTab('tab-loan', this)">🏦 ۳. مهندسی وام ۳۰م و تسویه زودهنگام</button>
+      <button class="tab-btn" onclick="switchTab('tab-stress', this)">⚡ ۴. استرس‌تست بازار و شبیه‌ساز آینده</button>
+      <button class="tab-btn" onclick="switchTab('tab-cfo', this)">🏛️ ۵. میز CFO دلار، ریبالانس و دفتر کل</button>
+    </nav>
+
+    <!-- =========================================================================
+         TAB 1: COMMAND & DUAL GROWTH
+         ========================================================================= -->
+    <section id="tab-command" class="tab-panel active">
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">⚡ ۳ فرمان استراتژیک امروز (AI Portfolio &amp; CFO Commander)</div>
+            <div class="card-subtitle">اولویت‌بندی خودکار بر اساس ممیزی خواب نقد، انحراف وزن، فاصله از کف و وضعیت نقدینگی</div>
+          </div>
+          <span class="pill pill-gold">موتور تصمیم‌یار CFO فعال</span>
+        </div>
+        <div id="dailyActionsContainer" class="grid-3" style="margin-bottom:0;"></div>
+      </div>
+
+      <!-- 5 Asset Pillars Summary -->
+      <div class="grid-5" id="assetPillarsGrid"></div>
+
+      <!-- Dual Charts -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📈 نمودار دوگانه رشد ثروت: تومان در برابر دلار واقعی</div>
+              <div class="card-subtitle">سنجش بازده حقیقی پورتفوی پس از حذف اثر تورم و افت ریال</div>
+            </div>
+            <span class="pill pill-cyan">Toman vs. USD</span>
+          </div>
+          <div class="chart-box">
+            <canvas id="wealthDualChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🍩 ترکیب طبقات دارایی و مقایسه با وزن هدف</div>
+              <div class="card-subtitle">توزیع فعلی سرمایه در ۴ طبقه اصلی + دارایی‌های وام</div>
+            </div>
+            <span class="pill pill-indigo">Asset Mix</span>
+          </div>
+          <div class="chart-box">
+            <canvas id="allocationDonutChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 2: SENIOR CFO & CASH INVESTMENT ADVISOR (GitHub Skills Integration)
+         ========================================================================= -->
+    <section id="tab-cash-advisor" class="tab-panel">
+      <!-- Banner: GitHub Skills Provenance & CFO Mandate -->
+      <div class="card card-gold-glow" style="margin-bottom:16px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🏛️ اتاق فرماندهی مدیر مالی و مشاور ارشد سرمایه‌گذاری وجه نقد (Institutional CFO &amp; Cash Advisory)</div>
+            <div class="card-subtitle">
+              مبتنی بر ۴ اسکیل استاندارد گیت‌هاب:
+              <strong>cfo-advisor</strong> (مدیریت خزانه و باند نقدینگی) •
+              <strong>fund-manager</strong> (تخصیص ارزش مورد انتظار EV و کنترل CVaR) •
+              <strong>business-investment-advisor</strong> (غربالگری فرصت‌ها و امتیازدهی مرکب) •
+              <strong>claude-for-financial-advisors</strong> (تولید مصوبه کمیته سرمایه‌گذاری IC Memo)
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-gold" onclick="applyCfoCashStrategy()">✅ اعمال استراتژی در وزن‌های پورتفوی</button>
+            <button class="btn" onclick="copyCfoMemo()">📋 کپی مصوبه اجرایی CFO</button>
+          </div>
+        </div>
+
+        <!-- 4 Executive Cash Audit KPIs -->
+        <div class="grid-4" style="margin-bottom:0;">
+          <div class="kpi-box">
+            <div class="kpi-box-label">کل نقدینگی آماده تخصیص (ریال + استیبل)</div>
+            <div id="cfoTotalDeployableLabel" class="kpi-box-val maskable mono-num gold-text" style="font-size:1.15rem;">۱۵۸,۸۰۵,۰۸۰ ت</div>
+            <div id="cfoTotalDeployableSub" style="font-size:0.72rem; color:var(--text-secondary); margin-top:3px;">۴۶.۹۸م ریال + $414.02 استیبل‌کوین</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-box-label">هزینه فرصت خواب وجه نقد بانکی (سالانه)</div>
+            <div id="cfoAnnualCashDragLabel" class="kpi-box-val maskable mono-num down" style="font-size:1.15rem;">-۱۴,۷۹۸,۱۵۸ ت</div>
+            <div id="cfoDailyCashDragSub" style="font-size:0.72rem; color:var(--text-secondary); margin-top:3px;">زیان روزانه خواب پول: ۴۰,۵۴۳ تومان</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-box-label">بازده موزون سبد پیشنهادی CFO (EV)</div>
+            <div id="cfoExpectedYieldLabel" class="kpi-box-val mono-num up" style="font-size:1.15rem;">+۴۱.۸٪ سالانه</div>
+            <div id="cfoRealAlphaSub" style="font-size:0.72rem; color:var(--text-secondary); margin-top:3px;">حفظ قدرت خرید دلاری + آلفای مثبت</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-box-label">باند نقدینگی پوشش تعهدات (Runway)</div>
+            <div id="cfoRunwayCardLabel" class="kpi-box-val mono-num" style="font-size:1.15rem; color:var(--cyan);">۱۶.۶ ماه قسط وام</div>
+            <div style="font-size:0.72rem; color:var(--text-secondary); margin-top:3px;">وضعیت ریسک نکول: 🟢 صفر (کاملاً ایمن)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3-Tier Treasury Pyramid (Tier 1, Tier 2, Tier 3) -->
+      <div class="grid-3">
+        <div class="cfo-tier-card tier-1">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span class="pill pill-cyan">لایه ۱ خزانه‌داری (Tier 1 • T+0)</span>
+              <strong id="tier1PctBadge" class="mono-num" style="color:var(--cyan)">۱۵٪ نقد</strong>
+            </div>
+            <div class="card-title" style="margin-bottom:4px;">🛡️ سپر عملیاتی و اقساط تعهدی آنی</div>
+            <p style="font-size:0.76rem; color:var(--text-secondary);">
+              تأمین ۲.۵ ماه قسط وام ۳۰ میلیونی (۲.۸۲م در ماه) + ذخیره اضطراری حساب و کارگزاری جهت جلوگیری از فروش اجباری دارایی‌ها در کف قیمت.
+            </p>
+          </div>
+          <div style="border-top:1px dashed var(--border-muted); padding-top:10px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:0.76rem; color:var(--text-secondary);">مبلغ تخصیص بهینه:</span>
+            <strong id="tier1TomanVal" class="maskable mono-num" style="font-size:1rem; color:var(--cyan);">۷,۰۴۶,۷۴۲ تومان</strong>
+          </div>
+        </div>
+
+        <div class="cfo-tier-card tier-2">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span class="pill pill-up">لایه ۲ خزانه‌داری (Tier 2 • T+1)</span>
+              <strong id="tier2PctBadge" class="mono-num up">۵۵٪ نقد</strong>
+            </div>
+            <div class="card-title" style="margin-bottom:4px;">🏛️ موتور مولد ضدتورمی (درآمد ثابت + طلا)</div>
+            <p style="font-size:0.76rem; color:var(--text-secondary);">
+              حذف کامل خواب پول با پارک در صندوق‌های درآمد ثابت روزشمار (۳۱.۵٪ مؤثر سالانه بدون جریمه برداشت) + صندوق طلای بورسی (عیار/لوتوس) برای پوشش جهش ارز.
+            </p>
+          </div>
+          <div style="border-top:1px dashed var(--border-muted); padding-top:10px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:0.76rem; color:var(--text-secondary);">مبلغ تخصیص بهینه:</span>
+            <strong id="tier2TomanVal" class="maskable mono-num up" style="font-size:1rem;">۲۵,۸۳۸,۰۵۳ تومان</strong>
+          </div>
+        </div>
+
+        <div class="cfo-tier-card tier-3">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span class="pill pill-gold">لایه ۳ خزانه‌داری (Tier 3 • Dry Powder)</span>
+              <strong id="tier3PctBadge" class="mono-num gold-text">۳۰٪ نقد</strong>
+            </div>
+            <div class="card-title" style="margin-bottom:4px;">🎯 مهمات شکار کف پله‌ای (Asymmetric Alpha)</div>
+            <p style="font-size:0.76rem; color:var(--text-secondary);">
+              آماده شلیک در اصلاح‌های بازار: خرید پله‌ای تتر در محدوده SMA90 (۲۵۶,۸۰۰ ت) و شکار سهام بنیادی با DPS بالا (شپدیس، فپنتا، وفیروزه) در منفی‌های هیجانی.
+            </p>
+          </div>
+          <div style="border-top:1px dashed var(--border-muted); padding-top:10px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:0.76rem; color:var(--text-secondary);">مبلغ تخصیص بهینه:</span>
+            <strong id="tier3TomanVal" class="maskable mono-num gold-text" style="font-size:1rem;">۱۴,۰۹۳,۴۸۳ تومان</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Cash Investment Engine & Simulator -->
+      <div class="grid-2">
+        <!-- Left: Interactive Parameters & 5-Vehicle Allocation Table -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🧮 موتور مهندسی تخصیص وجه نقد (Senior Investment Advisor Engine)</div>
+              <div class="card-subtitle">مبلغ وجه نقد و رژیم ریسک را انتخاب کنید تا سبد بهینه و ۴ پله ورود محاسبه شود</div>
+            </div>
+            <span class="pill pill-gold">Dynamic Allocator</span>
+          </div>
+
+          <!-- Quick Cash Amount Presets -->
+          <div class="preset-bar">
+            <button class="preset-chip active" onclick="setCfoCashPreset('current', this)">نقد ریالی فعلی (۴۶.۹۸م)</button>
+            <button class="preset-chip" onclick="setCfoCashPreset('all_liquid', this)">کل نقد ریالی + استیبل (۱۵۸.۸م)</button>
+            <button class="preset-chip" onclick="setCfoCashPreset('50m', this)">+۵۰ میلیون نقد جدید</button>
+            <button class="preset-chip" onclick="setCfoCashPreset('100m', this)">+۱۰۰ میلیون نقد جدید</button>
+            <button class="preset-chip" onclick="setCfoCashPreset('250m', this)">+۲۵۰ میلیون نقد جدید</button>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-control">
+              <label>مبلغ وجه نقد جهت مشاوره (تومان)</label>
+              <input type="number" id="cfoCashAmountInput" value="46978278" step="1000000" oninput="renderCfoCashAdvisor()" />
+            </div>
+            <div class="form-control">
+              <label>رژیم و دکترین سرمایه‌گذاری (CFO Regime)</label>
+              <select id="cfoRegimeSelect" onchange="renderCfoCashAdvisor()">
+                <option value="balanced" selected>⚖️ هسته متعادل مدیر مالی (Balanced CFO Core)</option>
+                <option value="shield">🛡️ سپر محافظه‌کارانه ضدتورمی (Conservative Shield)</option>
+                <option value="sniper">🎯 شکارچی تهاجمی اصلاح بازار (Tactical Dip Hunter)</option>
+                <option value="barbell">🏋️ استراتژی باربل (۷۰٪ بدون ریسک + ۳۰٪ جسورانه)</option>
+              </select>
+            </div>
+            <div class="form-control">
+              <label>افق زمانی نگهداری وجه نقد</label>
+              <select id="cfoHorizonSelect" onchange="renderCfoCashAdvisor()">
+                <option value="3">کوتاه‌مدت (۳ ماهه - نقدشوندگی بالا)</option>
+                <option value="6">میان‌مدت (۶ ماهه - پوشش فصلی)</option>
+                <option value="12" selected>یک‌ساله (۱۲ ماهه - بهینه‌سازی مرکب)</option>
+                <option value="24">بلندمدت (۲۴ ماهه - رشد ثروت)</option>
+              </select>
+            </div>
+            <div class="form-control">
+              <label>نرخ سود صندوق درآمد ثابت (% سالانه)</label>
+              <input type="number" id="cfoFixRateInput" value="31.5" step="0.5" min="15" max="50" oninput="renderCfoCashAdvisor()" />
+            </div>
+          </div>
+
+          <!-- 5-Vehicle Allocation Table -->
+          <div class="table-wrap">
+            <table class="pro-table">
+              <thead>
+                <tr>
+                  <th>ابزار سرمایه‌گذاری پیشنهادی</th>
+                  <th>سهم٪</th>
+                  <th>مبلغ تخصیص (تومان)</th>
+                  <th>بازده مورد انتظار</th>
+                  <th>نقدشوندگی</th>
+                  <th>نقش استراتژیک در خزانه</th>
+                </tr>
+              </thead>
+              <tbody id="cfoAllocationTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right: 12-Month Purchasing Power Chart & Proactive Red Flag Audit -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📊 مقایسه مسیر رشد وجه نقد در برابر خواب پول و تورم</div>
+              <div class="card-subtitle">شبیه‌سازی ارزش وجه نقد در ۳ حالت: بانک (۰٪)، صندوق درآمد ثابت و سبد پیشنهادی CFO</div>
+            </div>
+            <span class="pill pill-up">Value Trajectory</span>
+          </div>
+
+          <div class="chart-box" style="height:235px; margin-bottom:14px;">
+            <canvas id="cfoCashTrajectoryChart"></canvas>
+          </div>
+
+          <div class="card-title" style="font-size:0.86rem; margin-bottom:8px;">🔍 ممیزی پرچم‌های قرمز خزانه (GitHub cfo-advisor Diagnostic Audit)</div>
+          <div id="cfoRedFlagsContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
+        </div>
+      </div>
+
+      <!-- 4-Tranche Execution Playbook -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">⏱️ برنامه عملیاتی ۴ پله‌ای تزریق وجه نقد (4-Tranche Execution Playbook)</div>
+            <div class="card-subtitle">بر اساس قانون طلایی اسکیل fund-manager گیت‌هاب: هرگز کل نقدینگی را در یک روز و یک قیمت وارد بازارهای نوسانی نکنید</div>
+          </div>
+          <span class="pill pill-cyan">Anti-FOMO Protocol</span>
+        </div>
+        <div id="cfoTranchesGrid" class="tranche-grid"></div>
+      </div>
+
+      <!-- Opportunity Screener + Investment Committee Memo (IC Memo) -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🏆 غربالگر و رتبه‌بندی ابزارهای پارک و رشد وجه نقد (Opportunity Screener)</div>
+              <div class="card-subtitle">مبتنی بر اسکیل business-investment-advisor گیت‌هاب با امتیاز مرکب (۰ تا ۱۰۰)</div>
+            </div>
+            <span class="pill pill-indigo">Screener v2.6</span>
+          </div>
+          <div class="table-wrap">
+            <table class="pro-table">
+              <thead>
+                <tr>
+                  <th>رتبه و ابزار</th>
+                  <th>بازده اسمی</th>
+                  <th>بازده حقیقی</th>
+                  <th>ریسک ریزش (CVaR)</th>
+                  <th>تسویه</th>
+                  <th>امتیاز CFO</th>
+                </tr>
+              </thead>
+              <tbody id="cfoOpportunityScreenerBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📜 مصوبه رسمی کمیته سرمایه‌گذاری و حکم مدیر مالی (IC Executive Memo)</div>
+              <div class="card-subtitle">خروجی استاندارد اسکیل claude-for-financial-advisors (خلاصه مدیریتی، منطق ریاضی و تریگرهای تصمیم)</div>
+            </div>
+            <button class="btn btn-gold" style="min-height:34px;" onclick="copyCfoMemo()">📋 کپی متن مصوبه</button>
+          </div>
+          <div id="cfoMemoBox" class="memo-box"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 3: BOURSE RADAR & CRYPTO DIP HUNTER
+         ========================================================================= -->
+    <section id="tab-markets" class="tab-panel">
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🗺️ نقشه حرارتی و وزنی سبد بورس تهران (۱۱ نماد)</div>
+            <div class="card-subtitle">مساحت و رنگ هر کارت متناسب با ارزش روز و درصد سود/زیان خالص پس از کسر کارمزد</div>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <input type="text" id="stockSearchInput" class="inline-note" placeholder="🔍 جستجوی نماد یا صنعت..." oninput="renderStocksSection()" />
+            <select id="stockSortSelect" class="inline-input" style="width:155px;" onchange="renderStocksSection()">
+              <option value="valueDesc">مرتب‌سازی: بیشترین ارزش</option>
+              <option value="pnlPctDesc">بیشترین درصد سود</option>
+              <option value="pnlPctAsc">بیشترین افت (فرصت میانگین)</option>
+              <option value="dailyDesc">بیشترین بازده امروز</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="stockTreemapContainer" class="treemap-grid"></div>
+
+        <div class="table-wrap desktop-stock-table">
+          <table class="pro-table">
+            <thead>
+              <tr>
+                <th>نماد و صنعت</th>
+                <th>تعداد</th>
+                <th>میانگین خرید (ت)</th>
+                <th>قیمت روز (ت)</th>
+                <th>تغییر روزانه</th>
+                <th>ارزش روز (تومان)</th>
+                <th>سود/زیان خالص</th>
+                <th>بازده کل٪</th>
+                <th>وزن سبد٪</th>
+                <th>سیگنال هوشمند CFO</th>
+                <th>یادداشت استراتژیک</th>
+              </tr>
+            </thead>
+            <tbody id="stocksTableBody"></tbody>
+          </table>
+        </div>
+
+        <div id="mobileStocksContainer" class="mobile-stock-list"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🛡️ خزانه استیبل‌کوین (Ethereum Dry Powder) و نقدینگی</div>
+              <div class="card-subtitle">موجودی آماده شلیک روی شبکه اتریوم + ویرایش سریع نقد ریالی</div>
+            </div>
+            <span id="totalDryPowderBadge" class="pill pill-cyan">$414.02 Stable</span>
+          </div>
+
+          <div class="form-grid" style="margin-bottom:12px;">
+            <div class="form-control">
+              <label>موجودی نقد بانکی (تومان)</label>
+              <input type="number" id="quickBankCashInput" value="46000000" step="500000" onchange="updateQuickCashBalances()" />
+            </div>
+            <div class="form-control">
+              <label>قدرت خرید کارگزاری (تومان)</label>
+              <input type="number" id="quickBrokerCashInput" value="978278" step="100000" onchange="updateQuickCashBalances()" />
+            </div>
+          </div>
+
+          <div class="table-wrap" style="margin-bottom:14px;">
+            <table class="pro-table">
+              <thead>
+                <tr>
+                  <th>دارایی</th>
+                  <th>شبکه</th>
+                  <th>موجودی</th>
+                  <th>پگ دلاری</th>
+                  <th>ارزش دلاری</th>
+                  <th>معادل تومانی</th>
+                </tr>
+              </thead>
+              <tbody id="stablecoinsTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="card-title" style="margin: 14px 0 10px; font-size:0.88rem;">💎 کلکسیون NFT تلگرام (Fragment Assets)</div>
+          <div class="table-wrap">
+            <table class="pro-table">
+              <thead>
+                <tr>
+                  <th>عنوان دارایی / کلکسیون</th>
+                  <th>ارزش خرید (ت)</th>
+                  <th>کف قیمت فعلی (ت)</th>
+                  <th>سود/زیان</th>
+                  <th>نقدشوندگی</th>
+                </tr>
+              </thead>
+              <tbody id="nftsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🎯 رادار شکار کف کریپتو (۴ پله ورود هوشمند)</div>
+              <div class="card-subtitle">محاسبه خودکار پله‌های خرید BTC، ETH و SOL بر اساس سقف ۹۰ روزه و SMA200</div>
+            </div>
+            <span class="pill pill-up">Dip Sniper</span>
+          </div>
+          <div id="cryptoDipLadderContainer" style="display:flex; flex-direction:column; gap:12px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 4: 30M LOAN ENGINEERING & EARLY PAYOFF
+         ========================================================================= -->
+    <section id="tab-loan" class="tab-panel">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🏦 مهندسی مالی وام ۳۰ میلیون تومانی (۲۳٪ سالانه)</div>
+              <div class="card-subtitle">مقایسه ارزش دارایی‌های خریداری‌شده با کل بدهی و اقساط</div>
+            </div>
+            <span id="loanArbitrageBadge" class="pill pill-up">آربیتراژ مثبت</span>
+          </div>
+
+          <div class="kpi-mini-grid" style="margin-bottom:14px;">
+            <div class="kpi-box">
+              <div class="kpi-box-label">اصل وام دریافتی</div>
+              <div id="loanPrincipalLabel" class="kpi-box-val maskable mono-num">۳۰,۰۰۰,۰۰۰ ت</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-box-label">ارزش فعلی سبد وام</div>
+              <div id="loanCurrentPortfolioLabel" class="kpi-box-val maskable mono-num up">۳۴,۰۰۰,۰۰۰ ت</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-box-label">قسط ماهانه (۱۲ ماهه)</div>
+              <div id="loanMonthlyPaymentLabel" class="kpi-box-val maskable mono-num">۲,۸۲۲,۲۹۰ ت</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-box-label">کل بازپرداخت با سود</div>
+              <div id="loanTotalPaybackLabel" class="kpi-box-val maskable mono-num warn">۳۳,۸۶۷,۴۸۰ ت</div>
+            </div>
+          </div>
+
+          <div style="font-size:0.8rem; display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span>پیشرفت پوشش کل بدهی وام توسط دارایی‌ها:</span>
+            <strong id="loanBreakEvenPctLabel" class="mono-num up">100.4% (عبور از نقطه سر‌به‌سر!)</strong>
+          </div>
+          <div class="progress-track">
+            <div id="loanBreakEvenBar" class="progress-fill" style="width:100%;"></div>
+          </div>
+
+          <div class="form-grid" style="margin-top:14px;">
+            <div class="form-control">
+              <label>تاریخ شروع وام (شمسی)</label>
+              <input type="text" id="loanJalaliInput" value="1405/07/01" onchange="updateLoanParams()" />
+            </div>
+            <div class="form-control">
+              <label>تعداد اقساط پرداخت‌شده (از ۱۲)</label>
+              <input type="number" id="loanPaidCountInput" min="0" max="12" value="1" onchange="updateLoanParams()" />
+            </div>
+          </div>
+
+          <div class="loan-timeline" id="loanTimelineGrid"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">⚡ شبیه‌ساز تسویه زودهنگام وام (Early Payoff Simulator)</div>
+              <div class="card-subtitle">بررسی بهینه بودن تسویه یکجای وام در ماه دلخواه در برابر ادامه سرمایه‌گذاری</div>
+            </div>
+            <span class="pill pill-cyan">ماشین‌حساب تسویه</span>
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>ماه تسویه زودهنگام: <strong id="earlyPayoffMonthLabel" class="mono-num">ماه ۶</strong></span>
+              <span>تخفیف سود آینده بانک: <strong id="earlyPayoffDiscLabel" class="mono-num">۹۰٪</strong></span>
+            </div>
+            <input type="range" id="earlyPayoffMonthSlider" min="1" max="11" value="6" oninput="renderLoanSection()" />
+          </div>
+
+          <div id="earlyPayoffResultBox" class="action-card cyan-border" style="margin-bottom:14px;"></div>
+
+          <div class="card-title" style="font-size:0.86rem; margin-bottom:8px;">📊 ۳ سناریوی ارزش سبد وام در پایان ماه ۱۲</div>
+          <div class="chart-box" style="height:210px;">
+            <canvas id="loanScenarioChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 5: MARKET STRESS-TEST & FUTURE SIMULATOR
+         ========================================================================= -->
+    <section id="tab-stress" class="tab-panel">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🌪️ آزمایشگاه استرس‌تست و شوک بازار (What-If Simulator)</div>
+              <div class="card-subtitle">اسلایدرها را حرکت دهید تا اثر لحظه‌ای جهش یا سقوط بازارها بر ثروت کل شبیه‌سازی شود</div>
+            </div>
+            <button class="btn" onclick="resetStressSliders()">بازنشانی به قیمت روز</button>
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>💵 نرخ دلار / تتر شبیه‌سازی‌شده:</span>
+              <strong id="simUsdLabel" class="mono-num" style="color:var(--cyan)">270,100 تومان</strong>
+            </div>
+            <input type="range" id="simUsdSlider" min="180000" max="450000" step="1000" value="270100" oninput="runStressSimulation()" />
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>₿ قیمت بیت‌کوین (و کل بازار کریپتو):</span>
+              <strong id="simBtcLabel" class="mono-num" style="color:var(--amber)">$80,018</strong>
+            </div>
+            <input type="range" id="simBtcSlider" min="40000" max="160000" step="500" value="80018" oninput="runStressSimulation()" />
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>📊 تغییر شاخص بورس و سبد سهام:</span>
+              <strong id="simBourseLabel" class="mono-num up">0%</strong>
+            </div>
+            <input type="range" id="simBourseSlider" min="-40" max="100" step="2" value="0" oninput="runStressSimulation()" />
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>🪙 تغییر ارزش کلکسیون NFT و طلا:</span>
+              <strong id="simNftLabel" class="mono-num up">0%</strong>
+            </div>
+            <input type="range" id="simNftSlider" min="-40" max="100" step="2" value="0" oninput="runStressSimulation()" />
+          </div>
+
+          <div class="kpi-mini-grid" style="margin-top:14px;">
+            <div class="kpi-box">
+              <div class="kpi-box-label">ثروت کل در سناریوی شبیه‌سازی</div>
+              <div id="simResultGrossToman" class="kpi-box-val maskable mono-num" style="font-size:1.2rem; color:var(--emerald)">۲۴۴,۳۲۴,۸۲۹ ت</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-box-label">تغییر نسبت به وضعیت فعلی (Delta)</div>
+              <div id="simResultDeltaToman" class="kpi-box-val maskable mono-num">۰ تومان (0.0%)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🚀 شبیه‌ساز ۵ ساله رشد مرکب ثروت (Monte Carlo Trajectory)</div>
+              <div class="card-subtitle">پیش‌بینی مسیر ثروت در ۳ سناریوی محافظه‌کارانه، پایه و جسورانه با پس‌انداز ماهانه</div>
+            </div>
+            <span class="pill pill-up">Compounding</span>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-control">
+              <label>پس‌انداز/تزریق ماهانه (تومان)</label>
+              <input type="number" id="projMonthlySaveInput" value="8000000" step="1000000" oninput="renderProjectionChart()" />
+            </div>
+            <div class="form-control">
+              <label>افق زمانی شبیه‌سازی (سال)</label>
+              <select id="projYearsSelect" onchange="renderProjectionChart()">
+                <option value="1">۱ سال آینده (۱۲ ماه)</option>
+                <option value="3" selected>۳ سال آینده (۳۶ ماه)</option>
+                <option value="5">۵ سال آینده (۶۰ ماه)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="chart-box" style="height:255px;">
+            <canvas id="wealthProjectionChart"></canvas>
+          </div>
+          <div id="projSummaryText" style="margin-top:10px; font-size:0.8rem; color:var(--text-secondary);"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 6: CFO DOLLAR DESK, REBALANCE, LEDGER & LIVE PRICE ENGINEERING
+         ========================================================================= -->
+    <section id="tab-cfo" class="tab-panel">
+      <!-- Live Price Engineering & Diagnostics Embedded Panel -->
+      <div class="card card-gold-glow" style="margin-bottom:16px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">📡 مرکز مهندسی قیمت‌گیری زنده و عیب‌یاب خودکار منابع (Quantum Price Engineering Hub)</div>
+            <div class="card-subtitle">معماری ۴ کاناله ضدتحریم و ضد قطعی (Direct + CORS Proxy Waterfall + مثلث‌سازی طلای ۱۸ عیار + Circuit Breaker)</div>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="syncAllLivePrices(true)">🔄 دریافت زنده قیمت‌ها</button>
+            <button class="btn btn-gold" onclick="runPriceEngineSelfTest()">🧪 اجرای تست ۶ مرحله‌ای موتور قیمت</button>
+            <select id="autoSyncIntervalSelect" class="inline-input" style="width:155px;" onchange="changeAutoSyncInterval(this.value)" aria-label="بازه بروزرسانی خودکار">
+              <option value="0">بروزرسانی خودکار: دستی</option>
+              <option value="60000" selected>بروزرسانی خودکار: هر ۶۰ ثانیه</option>
+              <option value="180000">بروزرسانی خودکار: هر ۳ دقیقه</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-4" id="pricePipelinesGrid" style="margin-bottom:12px;"></div>
+
+        <!-- Manual Override & Live Calibration Strip -->
+        <div class="form-grid" style="background:var(--bg-elevated); padding:12px; border-radius:12px; margin-bottom:10px;">
+          <div class="form-control">
+            <label>کالیبراسیون دستی تتر (تومان)</label>
+            <input type="number" id="calUsdtInput" value="270100" step="100" />
+          </div>
+          <div class="form-control">
+            <label>طلای ۱۸ عیار (تومان/گرم)</label>
+            <input type="number" id="calGoldInput" value="17850000" step="50000" />
+          </div>
+          <div class="form-control">
+            <label>قیمت بیت‌کوین ($ USD)</label>
+            <input type="number" id="calBtcInput" value="80018.57" step="100" />
+          </div>
+          <div class="form-control">
+            <label>شاخص کل بورس (TEDPIX)</label>
+            <input type="number" id="calTedpixInput" value="2845200" step="1000" />
+          </div>
+          <div class="form-control" style="justify-content:flex-end;">
+            <button class="btn btn-gold" onclick="applyManualPriceCalibration()">⚡ اعمال نرخ‌های کالیبره‌شده</button>
+          </div>
+        </div>
+
+        <div id="priceDiagnosticReportBox" class="telemetry-log">[READY] Quantum Price Engine V26 initialized. Click "اجرای تست ۶ مرحله‌ای موتور قیمت" to run full diagnostics.</div>
+      </div>
+
+      <div class="grid-2">
+        <!-- CFO Dollar Macro Desk & SMA90 Buy Zones -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🏛️ میز فرماندهی CFO دلار و محدوده‌های خرید SMA90</div>
+              <div class="card-subtitle">تحلیل شکاف نرخ اسپات تتر با میانگین متحرک ۹۰ روزه و فشارسنج بنیادی</div>
+            </div>
+            <span id="cfoVerdictBadge" class="pill pill-warn">نگهداری / خرید پله‌ای</span>
+          </div>
+
+          <div class="kpi-mini-grid" style="margin-bottom:12px;">
+            <div class="kpi-box">
+              <div class="kpi-box-label">میانگین ۹۰ روزه (SMA90)</div>
+              <div id="cfoSma90Val" class="kpi-box-val mono-num">۲۵۶,۸۰۰ ت</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-box-label">انحراف اسپات از SMA90</div>
+              <div id="cfoDeviationVal" class="kpi-box-val mono-num warn">+5.18%</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-box-label">پله اول خرید سنگین (Buy Zone 1)</div>
+              <div id="cfoZone1Val" class="kpi-box-val mono-num up">۲۵۴,۲۰۰ ت</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-box-label">مرز حباب کوتاه‌مدت (Bubble)</div>
+              <div id="cfoBubbleVal" class="kpi-box-val mono-num down">۲۸۷,۶۰۰ ت</div>
+            </div>
+          </div>
+
+          <div class="chart-box" style="height:220px;">
+            <canvas id="usdSmaChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Practical Rebalance Desk (±2% Tolerance + Fees) -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">⚖️ میز ریبالانس عملیاتی (تلورانس ±۲٪ و لحاظ کارمزد)</div>
+              <div class="card-subtitle">تنظیم وزن هدف طبقات دارایی و صدور دستورات فروش قبل از خرید</div>
+            </div>
+            <button class="btn btn-primary" onclick="saveTargetWeights()">ثبت وزن‌های هدف</button>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-control">
+              <label>وزن هدف بورس (%)</label>
+              <input type="number" id="twStocks" value="25" min="0" max="100" oninput="renderRebalanceDesk()" />
+            </div>
+            <div class="form-control">
+              <label>وزن هدف کریپتو/تتر (%)</label>
+              <input type="number" id="twCrypto" value="40" min="0" max="100" oninput="renderRebalanceDesk()" />
+            </div>
+            <div class="form-control">
+              <label>وزن هدف نقد ریالی (%)</label>
+              <input type="number" id="twCash" value="15" min="0" max="100" oninput="renderRebalanceDesk()" />
+            </div>
+            <div class="form-control">
+              <label>وزن هدف کلکسیون NFT (%)</label>
+              <input type="number" id="twNfts" value="20" min="0" max="100" oninput="renderRebalanceDesk()" />
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="pro-table">
+              <thead>
+                <tr>
+                  <th>طبقه دارایی</th>
+                  <th>ارزش فعلی</th>
+                  <th>وزن فعلی</th>
+                  <th>وزن هدف</th>
+                  <th>انحراف</th>
+                  <th>فرمان اجرایی (با کسر کارمزد)</th>
+                </tr>
+              </thead>
+              <tbody id="rebalanceTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full Transaction Ledger -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">📒 دفتر کل تراکنش‌ها، سود تقسیمی (DPS) و موتور محاسبه XIRR</div>
+            <div class="card-subtitle">ثبت خرید، فروش، واریز سود سهام و کارمزد با قابلیت بازگردانی (Undo) و خروجی CSV</div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn" onclick="exportLedgerCsv()">📊 خروجی CSV</button>
+          </div>
+        </div>
+
+        <div class="form-grid" style="background:var(--bg-elevated); padding:14px; border-radius:12px; margin-bottom:14px;">
+          <div class="form-control">
+            <label>تاریخ شمسی</label>
+            <input type="text" id="txDateJalali" value="1405/01/31" placeholder="1405/01/31" />
+          </div>
+          <div class="form-control">
+            <label>نوع تراکنش</label>
+            <select id="txType">
+              <option value="BUY">خرید دارایی (BUY)</option>
+              <option value="SELL">فروش دارایی (SELL)</option>
+              <option value="DIVIDEND">سود نقدی مجمع / صندوق (DPS)</option>
+              <option value="DEPOSIT">واریز وجه جدید (DEPOSIT)</option>
+              <option value="WITHDRAW">برداشت وجه (WITHDRAW)</option>
+            </select>
+          </div>
+          <div class="form-control">
+            <label>نماد / دارایی</label>
+            <input type="text" id="txSymbol" placeholder="مثلاً شپدیس یا صندوق افران" />
+          </div>
+          <div class="form-control">
+            <label>تعداد / مقدار</label>
+            <input type="number" id="txQty" step="any" placeholder="1000" />
+          </div>
+          <div class="form-control">
+            <label>قیمت واحد (تومان)</label>
+            <input type="number" id="txPrice" step="any" placeholder="1250" />
+          </div>
+          <div class="form-control">
+            <label>کارمزد (تومان)</label>
+            <input type="number" id="txFee" value="0" />
+          </div>
+          <div class="form-control">
+            <label>یادداشت</label>
+            <input type="text" id="txNote" placeholder="خرید پله‌ای..." />
+          </div>
+          <div class="form-control" style="justify-content:flex-end;">
+            <button class="btn btn-primary" onclick="addLedgerTransaction()">➕ ثبت در دفتر کل</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="pro-table">
+            <thead>
+              <tr>
+                <th>تاریخ شمسی</th>
+                <th>نوع</th>
+                <th>نماد</th>
+                <th>تعداد</th>
+                <th>قیمت واحد (ت)</th>
+                <th>کارمزد (ت)</th>
+                <th>مبلغ کل (تومان)</th>
+                <th>یادداشت</th>
+                <th>عملیات</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ================= LIVE PRICE ENGINEERING MODAL ================= -->
+  <div id="priceEngineModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="priceModalTitle">
+    <div class="modal-panel">
+      <div class="card-header" style="margin-bottom:14px;">
+        <div>
+          <div id="priceModalTitle" class="card-title" style="font-size:1.05rem;">📡 کنسول مهندسی قیمت‌گیری زنده و تست سلامت (Quantum Price Telemetry)</div>
+          <div class="card-subtitle">بررسی لحظه‌ای لاتنسی، مسیرهای پروکسی، مثلث‌سازی طلای ۱۸ عیار و تست خودکار منابع</div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-gold" onclick="runPriceEngineSelfTest()">🧪 اجرای تست خودکار</button>
+          <button class="btn btn-primary" onclick="syncAllLivePrices(true)">🔄 همگام‌سازی فوری</button>
+          <button class="btn" onclick="closePriceEngineModal()">✕ بستن</button>
+        </div>
+      </div>
+      <div id="modalPipelinesContainer" class="grid-2" style="margin-bottom:14px;"></div>
+      <div id="modalTelemetryLog" class="telemetry-log">[TELEMETRY] Ready.</div>
+    </div>
+  </div>
+
+  <!-- ================= BOTTOM MOBILE NAVIGATION (6 TABS) ================= -->
+  <nav class="bottom-nav" aria-label="ناوبری موبایل">
+    <button class="bnav-item active" onclick="switchTabMobile('tab-command', 0)">🧭<span>فرماندهی</span></button>
+    <button class="bnav-item" onclick="switchTabMobile('tab-cash-advisor', 1)">💎<span>مشاور نقد</span></button>
+    <button class="bnav-item" onclick="switchTabMobile('tab-markets', 2)">📊<span>بورس/کریپتو</span></button>
+    <button class="bnav-item" onclick="switchTabMobile('tab-loan', 3)">🏦<span>وام ۳۰م</span></button>
+    <button class="bnav-item" onclick="switchTabMobile('tab-stress', 4)">⚡<span>استرس‌تست</span></button>
+    <button class="bnav-item" onclick="switchTabMobile('tab-cfo', 5)">🏛️<span>میز CFO</span></button>
+  </nav>
+
+  <!-- Toast with Undo Support -->
+  <div id="appToast" class="toast-box" role="status" aria-live="polite">
+    <span id="appToastMsg">عملیات انجام شد</span>
+    <button id="appToastUndoBtn" class="btn" style="display:none; min-height:32px; padding:4px 10px;" onclick="undoLastAction()">↩️ بازگردانی (Undo)</button>
+  </div>
+
+  <script src="js/config.js" defer></script>
+  <script src="js/01-data.js" defer></script>
+  <script src="js/02-utils.js" defer></script>
+  <script src="js/03-finance.js" defer></script>
+  <script src="js/04-price-engine.js" defer></script>
+  <script src="js/05-cfo-advisor.js" defer></script>
+  <script src="js/06-render.js" defer></script>
+  <script src="js/07-loan.js" defer></script>
+  <script src="js/08-stress-projection.js" defer></script>
+  <script src="js/09-cfo-desk.js" defer></script>
+  <script src="js/10-nav-themes-backup.js" defer></script>
+</body>
+</html>
